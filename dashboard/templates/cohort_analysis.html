@@ -1,0 +1,312 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cohort Analysis</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+    }
+    .container-flex {
+      display: flex;
+      flex: 1;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: #fff;
+      padding: 20px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+    }
+    .sidebar h2 {
+      font-size: 1.5rem;
+      color: #000;
+      margin-bottom: 30px;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar-link {
+      display: block;
+      color: #000;
+      padding: 10px 15px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .sidebar-sub-link {
+      display: block;
+      color: #000;
+      padding: 8px 15px 8px 30px;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .sidebar-link.collapsible .arrow {
+      float: right;
+      transition: transform 0.2s ease;
+    }
+    .sidebar-link.collapsible[aria-expanded="true"] .arrow {
+      transform: rotate(180deg);
+    }
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      width: calc(100% - 275px);
+      background-color: #fff;
+      min-height: 100vh;
+    }
+    /* Navbar in Main Content */
+    .navbar {
+      background-color: #1c1c1c;
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .navbar h1 {
+      font-size: 2rem;
+      color: white;
+      margin: 0;
+    }
+    /* Date Range and User Info */
+    .date-controls {
+      display: flex;
+      align-items: center;
+    }
+    .date-controls select {
+      width: 150px;
+      font-size: 0.9rem;
+      padding: 5px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      margin-right: 10px;
+    }
+    .custom-date-range {
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+    .custom-date-range input {
+      width: 150px;
+      padding: 5px;
+      margin-right: 8px;
+    }
+    /* User Info */
+    .user-info a {
+      text-decoration: none;
+    }
+    .user-info a.text-white {
+      color: white;
+    }
+    .user-info a.me-3 {
+      margin-right: 1rem;
+    }
+    /* Card Styles */
+    .card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    .card.mb-4 {
+      margin-bottom: 1.5rem;
+      padding: 20px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+    }
+    .card-header h3 {
+      font-size: 1.25rem;
+      color: #333;
+      margin: 0;
+      margin-right: 10px;
+    }
+    .card-header span {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    /* Table Fancy */
+    .table-fancy {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table-fancy thead {
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    .table-fancy th, .table-fancy td {
+      padding: 10px;
+      font-weight: 500;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    /* Pagination */
+    #pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    /* Consistent size for dropdown and date inputs */
+.navbar select,
+.navbar input[type="date"] {
+    height: 38px;
+    width: 140px;  /* reduced from 160px */
+    font-size: 0.9rem;
+    border-radius: 6px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+#applyCustomDate {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+}
+  </style>
+</head>
+<body>
+  <div class="container-flex">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <h2>Logo</h2>
+      <ul>
+        <li>
+          <a href="{% url 'dashboard' %}" class="sidebar-link">Home</a>
+        </li>
+        <!-- Customers -->
+        <li>
+          <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#customersMenu" role="button" aria-expanded="false" aria-controls="customersMenu">
+            Customers <i class="bi bi-chevron-down arrow"></i>
+          </a>
+          <div class="collapse" id="customersMenu">
+            <a href="{% url 'customer_insights' %}" class="sidebar-sub-link">Customer Insights</a>
+            <a href="{% url 'rfm_analysis' %}" class="sidebar-sub-link">RFM Analysis</a>
+            <a href="{% url 'rfm_churn_visualizations' %}" class="sidebar-sub-link">RFM &amp; Churn Trends</a>
+            <a href="{% url 'customer_profile' %}" class="sidebar-sub-link">Customer Profiles</a>
+          </div>
+        </li>
+        <!-- Trends -->
+        <li>
+          <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#trendsMenu" role="button" aria-expanded="false" aria-controls="trendsMenu">
+            Trends <i class="bi bi-chevron-down arrow"></i>
+          </a>
+          <div class="collapse" id="trendsMenu">
+            <a href="{% url 'eda_charts' %}" class="sidebar-sub-link">Data Exploration</a>
+            <a href="{% url 'cohort_analysis' %}" class="sidebar-sub-link" style="background-color: #e9ecef; font-weight: 500; color: #000;">Cohort Analysis</a>
+          </div>
+        </li>
+        <!-- Marketing -->
+        <li>
+          <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#marketingMenu" role="button" aria-expanded="false" aria-controls="marketingMenu">
+            Marketing <i class="bi bi-chevron-down arrow"></i>
+          </a>
+          <div class="collapse" id="marketingMenu">
+            <a href="{% url 'strategies' %}" class="sidebar-sub-link">Ad Strategies</a>
+          </div>
+        </li>
+        <!-- Static Links -->
+        <li><a href="{% url 'financial_insights' %}" class="sidebar-link">Finance</a></li>
+        <li><a href="{% url 'product_insights' %}" class="sidebar-link">Products</a></li>
+        <li><a href="{% url 'signout' %}" class="sidebar-link">Sign Out</a></li>
+      </ul>
+    </nav>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Navbar -->
+      <div class="navbar">
+        <h1>Cohort Analysis</h1>
+        <div class="date-controls">
+          <select id="dateRangeSelect" class="form-select me-2">
+            <option value="last_1_year" selected>Last 1 Year</option>
+            <option value="custom">Custom Date</option>
+          </select>
+          <div id="customDateRange" class="custom-date-range">
+            <input type="date" id="dateRangeStart" class="form-control me-2" value="2024-03-28">
+            <input type="date" id="dateRangeEnd" class="form-control me-2" value="2025-03-28">
+            <button id="applyCustomDate" class="btn btn-primary">Apply</button>
+          </div>
+          <div class="user-info ms-3">
+            {% if user.is_authenticated %}
+              <a href="#" class="me-3 text-white"><i class="bi bi-person-circle"></i> {{ user.username }}</a>
+              <a href="{% url 'signout' %}" class="text-white"><i class="bi bi-box-arrow-right"></i> Logout</a>
+            {% else %}
+              <a href="{% url 'signin' %}" class="text-white me-3">Sign In</a>
+              <a href="{% url 'signup' %}" class="text-white">Sign Up</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <!-- Error Message -->
+      <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
+      <!-- Cohort Revenue Matrix -->
+      <div class="card mb-4">
+        <div class="card-header" style="background-color: #f8f9fa;">
+          <h3>Cohort Matrix</h3>
+          <span>(<span id="currentDateRange">2024-03-28 to 2025-03-28</span>)</span>
+        </div>
+        <div class="card-body">
+          <div style="margin-bottom: 15px;">
+            <strong>Customer Details:</strong>
+            <span style="background-color: #00cc00; color: #000; padding: 2px 8px; border-radius: 4px; margin-left: 10px;">High Revenue ($1000+)</span>
+            <span style="background-color: #99ff99; color: #000; padding: 2px 8px; border-radius: 4px; margin-left: 5px;">Medium Revenue ($750-$1000)</span>
+            <span style="background-color: #ffff99; color: #000; padding: 2px 8px; border-radius: 4px; margin-left: 5px;">Low Revenue ($1-$750)</span>
+            <span style="background-color: #333; color: #fff; padding: 2px 8px; border-radius: 4px; margin-left: 5px;">Zero Revenue ($0)</span>
+          </div>
+          <div id="cohortMatrix" style="overflow-x: auto;"></div>
+        </div>
+      </div>
+      <!-- Cohort Metrics Table -->
+      <div class="card" style="padding: 0;">
+        <div class="card-header" style="background-color: #333; color: white; display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 18px; margin: 0;">Cohort Metrics</h3>
+          <button id="exportCohortMetrics" class="btn btn-primary">Export Data</button>
+        </div>
+        <div class="card-body">
+          <table class="table-fancy">
+            <thead>
+              <tr>
+                <th>Cohort</th>
+                <th>Size</th>
+                <th>Purchase Frequency</th>
+                <th>AOV ($)</th>
+                <th>Revenue per Customer ($)</th>
+                <th>LTV ($)</th>
+              </tr>
+            </thead>
+            <tbody id="summaryTableBody"></tbody>
+          </table>
+          <div id="pagination"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="{% static 'js/cohort.js' %}"></script>
+</body>
+</html>

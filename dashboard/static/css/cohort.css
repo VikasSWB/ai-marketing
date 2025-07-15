@@ -1,0 +1,210 @@
+/* Setting base font to match dashboard */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px; /* Matches content section margins */
+    font-family: 'Roboto', sans-serif; /* Matches dashboard font */
+    font-size: 1rem; /* Matches dashboard body text */
+    background: #fff; /* Matches table-fancy background */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* Matches table-fancy shadow */
+}
+
+th, td {
+    padding: 12px; /* Matches table-fancy padding */
+    text-align: left;
+    border: 1px solid #eee; /* Matches table-fancy border */
+    color: #333; /* Matches dashboard text color */
+}
+
+th {
+    background-color: #f8f9fa; /* Matches table-fancy header background */
+    font-weight: 500; /* Matches table-fancy header weight */
+}
+
+td {
+    background-color: #fff; /* Matches table-fancy row background */
+    transition: background-color 0.2s ease; /* Matches table-fancy hover transition */
+}
+
+tr:hover td {
+    background-color: #f9f9f9; /* Matches table-fancy row hover */
+}
+
+td:first-child {
+    border-left: 4px solid #ddd; /* Matches table-fancy first column border */
+}
+
+.heatmap-cell {
+    text-align: center;
+}
+
+/* Legend styling to match dashboard cards */
+.legend {
+    margin-bottom: 15px; /* Matches section spacing */
+    background: #fff; /* Matches stat-card background */
+    padding: 20px; /* Matches stat-card padding */
+    border-radius: 10px; /* Matches stat-card border-radius */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* Matches stat-card shadow */
+}
+
+.legend-item {
+    display: inline-block;
+    padding: 8px 15px; /* Matches sidebar link padding */
+    margin-right: 10px;
+    border-radius: 5px; /* Matches sidebar link border-radius */
+    color: #333; /* Matches dashboard text color */
+    font-size: 0.9rem; /* Matches sidebar sub-link size */
+}
+
+/* Pagination styling to match dashboard buttons */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    font-family: 'Roboto', sans-serif; /* Matches dashboard font */
+    font-size: 0.9rem; /* Matches smaller text in dashboard */
+}
+
+.pagination button {
+    padding: 8px 16px; /* Matches button padding */
+    margin: 0 5px;
+    background-color: #e9ecef; /* Matches accordion-button hover */
+    color: #333; /* Matches dashboard text color */
+    border: none;
+    border-radius: 5px; /* Matches sidebar link border-radius */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Matches accordion-button transition */
+}
+
+.pagination button:hover {
+    background-color: #dee2e6; /* Matches accordion-button active */
+    color: #000; /* Matches dashboard hover text */
+}
+
+.pagination button:disabled {
+    background-color: #cccccc; /* Retained for disabled state */
+    cursor: not-allowed;
+}
+
+.pagination span {
+    padding: 8px 12px;
+    margin: 0 5px;
+    color: #666; /* Matches sidebar link color */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination span:hover {
+    background-color: #f8f9fa; /* Matches sidebar link hover */
+    color: #000; /* Matches sidebar link hover text */
+}
+
+.pagination span.active {
+    background-color: #e9ecef; /* Matches sidebar active */
+    color: #000; /* Matches sidebar active text */
+    font-weight: 500;
+}
+
+.pagination .ellipsis {
+    padding: 8px 12px;
+    color: #666; /* Matches secondary text */
+    cursor: default;
+}
+
+/* Filter container styled like stat-card */
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px; /* Matches content section margins */
+    background: #fff; /* Matches stat-card background */
+    padding: 20px; /* Matches stat-card padding */
+    border-radius: 10px; /* Matches stat-card border-radius */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Matches stat-card shadow */
+    transition: transform 0.2s ease; /* Matches stat-card transition */
+}
+
+.filter-container:hover {
+    transform: translateY(-3px); /* Matches stat-card hover */
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    margin-bottom: 5px;
+    font-weight: 500; /* Matches table-fancy header weight */
+    color: #333; /* Matches dashboard text */
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 8px;
+    border: 1px solid #eee; /* Matches table-fancy border */
+    border-radius: 5px; /* Matches sidebar link border-radius */
+    font-size: 0.9rem; /* Matches dashboard smaller text */
+    color: #333; /* Matches dashboard text */
+}
+
+button#applyFilters {
+    padding: 8px 16px;
+    background-color: #e9ecef; /* Matches accordion-button hover */
+    color: #333; /* Matches dashboard text */
+    border: none;
+    border-radius: 5px; /* Matches sidebar link border-radius */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Matches accordion-button */
+    font-family: 'Roboto', sans-serif; /* Matches dashboard font */
+    font-size: 0.9rem; /* Matches dashboard smaller text */
+}
+
+button#applyFilters:hover {
+    background-color: #dee2e6; /* Matches accordion-button active */
+    color: #000; /* Matches dashboard hover text */
+}
+
+/* Export button styled like dashboard buttons */
+button#exportCohortData {
+    padding: 8px 16px;
+    background-color: #e9ecef; /* Matches accordion-button hover */
+    color: #333; /* Matches dashboard text */
+    border: none;
+    border-radius: 5px; /* Matches sidebar link border-radius */
+    cursor: pointer;
+    margin-top: 15px; /* Matches section spacing */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Matches accordion-button */
+    font-family: 'Roboto', sans-serif; /* Matches dashboard font */
+    font-size: 0.9rem; /* Matches dashboard smaller text */
+}
+
+button#exportCohortData:hover {
+    background-color: #dee2e6; /* Matches accordion-button active */
+    color: #000; /* Matches dashboard hover text */
+}
+
+/* Error message styling */
+.error {
+    color: #666; /* Matches secondary text (no red in dashboard) */
+    margin-bottom: 15px; /* Matches section spacing */
+    font-size: 0.9rem; /* Matches dashboard smaller text */
+}
+
+/* Section styling */
+.table-container {
+    margin-bottom: 30px; /* Matches content section margins */
+    background: #fff; /* Matches stat-card background */
+    padding: 20px; /* Matches stat-card padding */
+    border-radius: 10px; /* Matches stat-card border-radius */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* Matches stat-card shadow */
+}
+
+h2 {
+    margin-bottom: 15px;
+    font-size: 1.5rem; /* Matches sidebar h2 */
+    color: #333; /* Matches dashboard text */
+    font-family: 'Roboto', sans-serif; /* Matches dashboard font */
+}

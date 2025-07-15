@@ -1,0 +1,6 @@
+Django
+pandas
+python-dateutil
+numpy
+google-generativeai
+mysqlclient

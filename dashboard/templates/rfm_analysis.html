@@ -1,0 +1,316 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFM Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/charts.js' %}"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .sidebar {
+    width: 250px;
+    background-color: #fff; /* White background for sidebar */
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1); /* Matches the shadow */
+}
+
+.sidebar h2 {
+    font-size: 1.5rem;
+    color: #333; /* Matches the text color */
+    margin-bottom: 30px;
+}
+
+.sidebar a.sidebar-link {
+    display: block;
+    color: #000; /* Matches the link color */
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.sidebar a.active {
+    background-color: #e9ecef; /* Matches the active background */
+    color: #000 !important; /* Matches the active text color */
+    font-weight: 500;
+}
+
+.sidebar a.sidebar-link:hover {
+    background-color: #f8f9fa; /* Matches the hover background */
+    color: #000; /* Matches the hover text color */
+}
+
+.sidebar a.sidebar-sub-link {
+    display: block;
+    color: #666; /* Matches the sub-link color */
+    padding: 8px 15px 8px 30px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.sidebar a.sidebar-sub-link:hover {
+    color: #000; /* Matches the hover text color */
+}
+
+.canvas-wrapper {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.bi-chevron-down {
+    transition: transform 0.3s ease;
+}
+.bi-chevron-down.rotate {
+    transform: rotate(180deg);
+}
+
+:root {
+    --color-black: #1c1c1c;
+    --color-white: #fff;
+    --color-black-rgb: 28, 28, 28;
+}
+
+.navbar {
+    background-color: var(--color-black);
+    padding: 12px;
+    box-shadow: 0 2px 5px rgba(var(--color-black-rgb), 0.1);
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.navbar h1 {
+    font-size: 2rem;
+    color: var(--color-white);
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+
+
+        .content {
+            margin-left: 250px ;
+    flex: 1;
+    padding: 30px;
+    background-color: #ffffff;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .filter-container {
+            margin-bottom: 20px;
+        }
+        .error {
+            color: red;
+            display: none;
+        }
+        /* Consistent size for dropdown and date inputs */
+.navbar select,
+.navbar input[type="date"] {
+    height: 38px;
+    width: 140px;  /* reduced from 160px */
+    font-size: 0.9rem;
+    border-radius: 6px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+.user-info a {
+    margin-left: 8px; /* reduced from 15px */
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+#applyFilters {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+}
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Logo</h2>
+        <div style="margin-top: 20px;"></div>
+        <a href="{% url 'dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Home</a>
+        <a href="#customers" class="sidebar-link collapsible {% if request.resolver_match.url_name in 'customer_insights rfm_analysis rfm_churn_visualizations customer_profile' %}active{% endif %}" data-bs-toggle="collapse" aria-expanded="false" aria-controls="customers">
+            Customers <i class="bi bi-chevron-down arrow"></i>
+        </a>
+        <div class="collapse" id="customers">
+            <a href="{% url 'customer_insights' %}" class="sidebar-sub-link {% if request.resolver_match.url_name == 'customer_insights' %}active{% endif %}">Customer Insights</a>
+            <a href="{% url 'rfm_analysis' %}" class="sidebar-sub-link {% if request.resolver_match.url_name == 'rfm_analysis' %}active{% endif %}">RFM Analysis</a>
+            <a href="{% url 'rfm_churn_visualizations' %}" class="sidebar-sub-link {% if request.resolver_match.url_name == 'rfm_churn_visualizations' %}active{% endif %}">RFM & Churn Trends</a>
+            <a href="{% url 'customer_profile' %}" class="sidebar-sub-link {% if request.resolver_match.url_name == 'customer_profile' %}active{% endif %}">Customer Profiles</a>
+        </div>
+        <a href="#trends" class="sidebar-link collapsible {% if request.resolver_match.url_name in 'eda_charts cohort_analysis' %}active{% endif %}" data-bs-toggle="collapse" aria-expanded="false" aria-controls="trends">
+            Trends <i class="bi bi-chevron-down arrow"></i>
+        </a>
+        <div class="collapse" id="trends">
+            <a href="{% url 'eda_charts' %}" class="sidebar-sub-link {% if request.resolver_match.url_name == 'eda_charts' %}active{% endif %}">Data Exploration</a>
+            <a href="{% url 'cohort_analysis' %}" class="sidebar-sub-link {% if request.resolver_match.url_name == 'cohort_analysis' %}active{% endif %}">Cohort Analysis</a>
+        </div>
+        <a href="#marketing" class="sidebar-link collapsible {% if request.resolver_match.url_name == 'strategies' %}active{% endif %}" data-bs-toggle="collapse" aria-expanded="false" aria-controls="marketing">
+            Marketing <i class="bi bi-chevron-down arrow"></i>
+        </a>
+        <div class="collapse" id="marketing">
+            <a href="{% url 'strategies' %}" class="sidebar-sub-link {% if request.resolver_match.url_name == 'strategies' %}active{% endif %}">Ad Strategies</a>
+        </div>
+        <a href="{% url 'financial_insights' %}" class="sidebar-link {% if request.resolver_match.url_name == 'financial_insights' %}active{% endif %}">Finance</a>
+        <a href="{% url 'product_insights' %}" class="sidebar-link {% if request.resolver_match.url_name == 'product_insights' %}active{% endif %}">Products</a>
+        <a href="{% url 'signout' %}" class="sidebar-link {% if request.resolver_match.url_name == 'signout' %}active{% endif %}">Sign Out</a>
+    </div>
+
+    <div class="content">
+        <div class="navbar">
+            <h1>RFM Analysis</h1>
+            <div class="d-flex align-items-center">
+                <select id="dateRangeOption" class="form-select me-2">
+                    <option value="last_1_year" selected>Last 1 Year</option>
+                    <option value="custom">Custom Date</option>
+                </select>
+                <div id="customDateRange" class="d-flex align-items-center">
+                    <input type="date" id="startDate" class="form-control me-2">
+                    <input type="date" id="endDate" class="form-control me-2">
+                    <button id="applyFilters" class="btn btn-primary">Apply</button>
+                </div>
+                <div class="user-info">
+                    <a href="#" class="me-3"><i class="bi bi-person-circle"></i> {{ user.username }}</a>
+                    <a href="{% url 'signout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="error" class="error"></div>
+
+         <!-- Date Range Note -->
+         <p id="dateRangeNote" class="mb-4">Showing data for the last 1 year (2024-05-19 to 2025-05-19).</p>
+
+       
+
+         <div class="charts">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h3>Recency Distribution</h3>
+                        <p>Distribution of customer recency scores (days since last order)</p>
+                        <canvas id="rfm_recencyChart" style="display: none;"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h3>Frequency Distribution</h3>
+                        <p>Distribution of customer frequency scores (orders per customer)</p>
+                        <canvas id="rfm_frequencyChart" style="display: none;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h3>Monetary Distribution</h3>
+                        <p>Distribution of customer monetary scores (total price $)</p>
+                        <canvas id="rfm_monetaryChart" style="display: none;"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h3>Churn Analysis: Frequency and Monetary</h3>
+                        <p>Frequency and monetary scores by churn status (churned if last order > 90 days from 2025-05-30)</p>
+                        <canvas id="rfm_churnCombinedChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+   <!-- <div class="filter-container">
+            <h2>Filters</h2>
+            <div>
+                <label for="dateRangeOption">Date Range Option:</label>
+                <select id="dateRangeOption">
+                    <option value="last_1_year">Last 1 Year</option>
+                    <option value="all">All Data</option>
+                </select>
+            </div>
+            <div>
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate">
+            </div>
+            <div>
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate">
+            </div>
+            <button id="applyFilters">Apply Filters</button>
+        </div>
+
+        <div id="dateRangeNote">
+            Showing data for the last 1 year (2024-04-01 to 2025-04-01).
+        </div> -->
+
+
+
+
+
+ <!-- <div class="chart-container">
+                <h3>Frequency by Churn Status</h3>
+                <p>Frequency scores by churn status (churned if last order > 90 days from 2025-05-30)</p>
+                <canvas id="rfm_freqByChurnChart" style="display: none;"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>Monetary by Churn Status</h3>
+                <p>Monetary scores (total price $) by churn status (churned if last order > 90 days from 2025-05-30)</p>
+                <canvas id="rfm_monetaryByChurnChart" style="display: none;"></canvas>
+            </div> -->
+
+
+
+
+ <!-- <div class="chart-container">
+                <h3>Recency vs. Monetary (Total Price)</h3>
+                <p>Scatter plot of recency vs. monetary (total price $), colored by churn status</p>
+                <canvas id="rfm_recencyVsMonetaryChart" style="display: none;"></canvas>
+            </div> -->

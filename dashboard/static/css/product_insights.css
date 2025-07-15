@@ -1,0 +1,292 @@
+/* Product Insights Specific Styles */
+
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Container for the entire page */
+.container {
+    display: flex;
+    min-height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: #0288d1; /* Deep blue for product theme */
+    color: #ffffff;
+    padding: 20px;
+    position: fixed;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    font-size: 24px;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #000; /* Light blue for contrast */
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+    color: black;
+    text-decoration: none;
+    font-size: 16px;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+    background-color: #039be5; /* Lighter blue on hover */
+    color: #ffffff;
+}
+
+/* Main Content Styles */
+.main-content {
+    margin-left: 250px !important;
+    flex: 1;
+    padding: 30px;
+    background-color: #ffffff;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2rem;
+    color: #0288d1;
+}
+
+.user-info p {
+    font-size: 16px;
+    color: #fff;
+}
+
+.user-info a {
+    color: #0288d1;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.user-info a:hover {
+    text-decoration: underline;
+}
+
+/* Filters Section */
+.filters {
+    background-color: #e7ebeb !important; /* Light blue background */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.filters h3 {
+    font-size: 20px;
+    color: #000;
+    margin-bottom: 15px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.filter-group label {
+    font-size: 14px;
+    color: #000;
+    margin-right: 10px;
+    width: 120px;
+}
+
+.filter-group select,
+.filter-group input[type="date"] {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #b0bec5;
+    border-radius: 5px;
+    background-color: #ffffff;
+    width: 200px;
+}
+
+#applyFilters {
+    padding: 10px 20px;
+    background-color: #000;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#applyFilters:hover {
+    background-color: #333;
+}
+
+/* Custom Dropdown for Product Selection */
+.custom-dropdown {
+    position: relative;
+    width: 200px;
+}
+
+#productSearch {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #b0bec5;
+    border-radius: 5px;
+    background-color: #ffffff;
+}
+
+#productList {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    border: 1px solid #b0bec5;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#productList li {
+    padding: 8px;
+    font-size: 14px;
+    color: #424242;
+    cursor: pointer;
+}
+
+#productList li:hover,
+#productList li.selected {
+    background-color: #e1f5fe;
+}
+
+/* Date Range Note */
+#dateRangeNote {
+    font-size: 14px;
+    color: #000;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+/* Charts Section */
+.charts {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.chart-container {
+    flex: 1;
+    min-width: 300px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container h3 {
+    font-size: 18px;
+    color: #0288d1;
+    margin-bottom: 10px;
+}
+
+.chart-container p {
+    font-size: 14px;
+    color: black;
+    margin-bottom: 15px;
+}
+
+#topProductsRevenueContainer {
+    background-color: #ffffff; /* Orange background for revenue chart */
+}
+
+#quantityOverTimeContainer {
+    background-color: #ffffff; /* Teal background for quantity chart */
+}
+
+.canvas-wrapper {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Error Message */
+#error {
+    background-color: #ffebee;
+    color: #d32f2f;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        position: relative;
+        height: auto;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .charts {
+        flex-direction: column;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filter-group label {
+        margin-bottom: 5px;
+        width: auto;
+    }
+
+    .filter-group select,
+    .filter-group input[type="date"],
+    .custom-dropdown {
+        width: 100%;
+    }
+}

@@ -1,0 +1,237 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Insights - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/product_insights.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/customer_profile.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sidebar-link {
+          display: block;
+          color: #000;
+          padding: 10px 15px;
+          text-decoration: none;
+          border-radius: 5px;
+          font-size: 1rem;
+        }
+    
+        .sidebar-sub-link {
+          display: block;
+          color: #666;
+          padding: 8px 15px 8px 30px;
+          text-decoration: none;
+          font-size: 0.9rem;
+        }
+    
+        .sidebar-link.collapsible .arrow {
+          float: right;
+          transition: transform 0.2s ease;
+        }
+    
+        .sidebar-link.collapsible[aria-expanded="true"] .arrow {
+          transform: rotate(180deg);
+        }
+        :root {
+    --color-black: #1c1c1c;
+    --color-white: #fff;
+    --color-black-rgb: 28, 28, 28;
+}
+
+.navbar {
+    background-color: var(--color-black);
+    padding: 12px;
+    box-shadow: 0 2px 5px rgba(var(--color-black-rgb), 0.1);
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.navbar h1 {
+    font-size: 2rem;
+    color: var(--color-white);
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.navbar select,
+.navbar input[type="date"] {
+    height: 38px;
+    width: 140px;  /* reduced from 160px */
+    font-size: 0.9rem;
+    border-radius: 6px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+.user-info a {
+    margin-left: 8px; /* reduced from 15px */
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+#applyFilters{
+  background-color: #0d6efd;
+  font-size: 0.9rem;
+  padding: 5px 10px;
+  
+}
+
+      </style>
+</head>
+<body>
+  <div style="display: flex; flex: 1;">
+        <!-- Sidebar -->
+        <nav style="width: 250px; background-color: #fff; padding: 20px; height: 100vh; position: fixed; top: 0; left: 0; box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1); overflow-y: auto;">
+            <h2 style="font-size: 1.5rem; color: #333; margin-bottom: 30px;">Logo</h2>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li>
+                <a href="{% url 'dashboard' %}" class="sidebar-link">Home</a>
+              </li>
+      
+              <!-- Customers -->
+              <li>
+                <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#customersMenu" role="button" aria-expanded="false" aria-controls="customersMenu">
+                  Customers <i class="bi bi-chevron-down arrow"></i>
+                </a>
+                <div class="collapse" id="customersMenu">
+                  <a href="{% url 'customer_insights' %}" class="sidebar-sub-link">Customer Insights</a>
+                  <a href="{% url 'rfm_analysis' %}" class="sidebar-sub-link">RFM Analysis</a>
+                  <a href="{% url 'rfm_churn_visualizations' %}" class="sidebar-sub-link">RFM & Churn Trends</a>
+                  <a href="{% url 'customer_profile' %}" class="sidebar-sub-link">Customer Profiles</a>
+                </div>
+              </li>
+      
+              <!-- Trends -->
+              <li>
+                <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#trendsMenu" role="button" aria-expanded="false" aria-controls="trendsMenu">
+                  Trends <i class="bi bi-chevron-down arrow"></i>
+                </a>
+                <div class="collapse" id="trendsMenu">
+                  <a href="{% url 'eda_charts' %}" class="sidebar-sub-link">Data Exploration</a>
+                  <a href="{% url 'cohort_analysis' %}" class="sidebar-sub-link" style="background-color: #e9ecef; font-weight: 500; color: #000;">Cohort Analysis</a>
+                </div>
+              </li>
+      
+              <!-- Marketing -->
+              <li>
+                <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#marketingMenu" role="button" aria-expanded="false" aria-controls="marketingMenu">
+                  Marketing <i class="bi bi-chevron-down arrow"></i>
+                </a>
+                <div class="collapse" id="marketingMenu">
+                  <a href="{% url 'strategies' %}" class="sidebar-sub-link">Ad Strategies</a>
+                </div>
+              </li>
+      
+              <!-- Static Links -->
+              <li><a href="{% url 'financial_insights' %}" class="sidebar-link">Finance</a></li>
+              <li><a href="{% url 'product_insights' %}" class="sidebar-link">Products</a></li>
+              <li><a href="{% url 'signout' %}" class="sidebar-link">Sign Out</a></li>
+            </ul>
+          </nav>
+        <!-- Main Content -->
+        <div class="main-content">
+          <div class="navbar">
+            <h1>Product Insights</h1>
+            <div class="d-flex align-items-center">
+                <select id="dateRangeOption" class="form-select me-2">
+                    <option value="last_1_year" selected>Last 1 Year</option>
+                    <option value="custom">Custom Date</option>
+                </select>
+                <div id="customDateRange" class="d-flex align-items-center">
+                    <input type="date" id="startDate" class="form-control me-2">
+                    <input type="date" id="endDate" class="form-control me-2">
+                    <button id="applyFilters" class="btn btn-primary">Apply</button>
+                </div>
+                <div class="user-info">
+                    <a href="#" class="me-3"><i class="bi bi-person-circle"></i> {{ user.username }}</a>
+                    <a href="{% url 'signout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+        
+
+            <!-- Error Message -->
+            <div id="error" style="display: none;"></div>
+
+           
+            <!-- Date Range Note -->
+            <p id="dateRangeNote">Showing data for the last 1 year (2024-05-19 to 2025-05-19).</p>
+
+            <!-- Charts -->
+            <section class="charts">
+                <!-- Top Products by Revenue Chart -->
+                <div class="chart-container" id="topProductsRevenueContainer">
+                    <h3>Top Products by Revenue</h3>
+                    <p>Total revenue per product (Top 10)</p>
+                    <div class="canvas-wrapper">
+                        <canvas id="topProductsRevenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Product Quantity Sold Over Time Chart -->
+                <div class="chart-container" id="quantityOverTimeContainer">
+                    <h3>Product Quantity Sold Over Time</h3>
+                    <p>Total quantity sold per month</p>
+                    <div class="filter-group">
+                        <label for="productSearch">Select Product:</label>
+                        <div class="custom-dropdown">
+                            <input type="text" id="productSearch" placeholder="Search for a product..." readonly>
+                            <ul id="productList">
+                                <li data-value="All Products">All Products</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="quantityOverTimeChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="{% static 'js/product_insights.js' %}"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <!-- Filters
+            <section class="filters">
+                <h3>Filters</h3>
+                <div class="filter-group">
+                    <label for="dateRangeOption">Date Range Option:</label>
+                    <select id="dateRangeOption">
+                        <option value="last_1_year" selected>Last 1 Year</option>
+                        <option value="custom">Custom Dates</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="filter-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate">
+                </div>
+                <button id="applyFilters">Apply Filters</button>
+            </section> -->

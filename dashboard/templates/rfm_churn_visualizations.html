@@ -1,0 +1,294 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFM & Churn Trends - New DB Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .sidebar {
+            position: fixed;
+            top: -10px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 20px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+        .sidebar-sub-link.active {
+            background-color: #e9ecef;
+        }
+        .rotate {
+            transform: rotate(180deg);
+        }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+        canvas {
+            background-color: white !important;
+        }
+        .sidebar-link {
+            display: block;
+            color: #666;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: 'Roboto', sans-serif;
+            margin-bottom: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .sidebar-link:hover {
+            background-color: #f0f0f0;
+        }
+
+        .sidebar-sub-link {
+            display: block;
+            color: #666;
+            padding: 8px 25px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-family: 'Roboto', sans-serif;
+            margin-bottom: 2px;
+            transition: background-color 0.2s ease;
+        }
+
+        .sidebar-sub-link:hover {
+            background-color: #f0f0f0;
+        }
+
+        .sidebar-link.collapsible .arrow {
+            float: right;
+            transition: transform 0.2s ease;
+        }
+
+        .sidebar-link.collapsible[aria-expanded="true"] .arrow {
+            transform: rotate(180deg);
+        
+        }
+
+        :root {
+    --color-black: #1c1c1c;
+    --color-white: #fff;
+    --color-black-rgb: 28, 28, 28;
+}
+
+.navbar {
+    background-color: var(--color-black);
+    padding: 12px;
+    box-shadow: 0 2px 5px rgba(var(--color-black-rgb), 0.1);
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.navbar h1 {
+    font-size: 2rem;
+    color: var(--color-white);
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+.content {
+    margin-left: 250px !important;
+    flex: 1;
+    padding: 30px;
+    background-color: #ffffff;
+        }
+
+    </style>
+</head>
+<body style="font-family: 'Roboto', sans-serif; background-color: #f5f5f5; color: #000; margin: 0; padding: 0; display: flex; min-height: 100vh;">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Only -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="pt-3 px-3">
+                    <h2 style="font-size: 1.5rem; color: #333; margin-bottom: 30px; font-family: 'Roboto', sans-serif;">Logo</h2>
+                    <ul class="nav flex-column" style="list-style: none; padding: 0;">
+                        <li class="nav-item">
+                            <a href="{% url 'dashboard' %}" class="sidebar-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#edaMenu" role="button" aria-expanded="false" aria-controls="edaMenu">
+                                Customers <i class="bi bi-chevron-down arrow"></i>
+                            </a>
+                            <div class="collapse" id="edaMenu">
+                                <a href="{% url 'customer_insights' %}" class="sidebar-sub-link">Customer Insights</a>
+                                <a href="{% url 'rfm_analysis' %}" class="sidebar-sub-link">RFM Analysis</a>
+                                <a href="{% url 'rfm_churn_visualizations' %}" class="sidebar-sub-link active">RFM & Churn Trends</a>
+                                <a href="{% url 'customer_profile' %}" class="sidebar-sub-link">Customer Profiles</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#analyticsMenu" role="button" aria-expanded="false" aria-controls="analyticsMenu">
+                                Trends <i class="bi bi-chevron-down arrow"></i>
+                            </a>
+                            <div class="collapse" id="analyticsMenu">
+                                <a href="{% url 'eda_charts' %}" class="sidebar-sub-link">Data Exploration</a>
+                                <a href="{% url 'cohort_analysis' %}" class="sidebar-sub-link">Cohort Analysis</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#marketingMenu" role="button" aria-expanded="false" aria-controls="marketingMenu">
+                                Marketing <i class="bi bi-chevron-down arrow"></i>
+                            </a>
+                            <div class="collapse" id="marketingMenu">
+                                <a href="{% url 'strategies' %}" class="sidebar-sub-link">Ad Strategies</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'financial_insights' %}" class="sidebar-link">Finance</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'product_insights' %}" class="sidebar-link">Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'signup' %}" class="sidebar-link">Sign Out</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- Main Content -->
+            <main class=" content col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class=" navbar d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">RFM & Churn Trends</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                       
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                Filters
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuButton" style="min-width: 300px;">
+
+                                <div class="mb-2">
+                                    <label for="filterSegment" class="form-label">Segment:</label>
+                                    <select id="filterSegment" class="form-select form-select-sm">
+                                        <option value="All">All Segments</option>
+                                        <option value="Loyal Customer">Loyal Customer</option>
+                                        <option value="Active Customer">Active Customer</option>
+                                        <option value="Average Customer">Average Customer</option>
+                                        <option value="At Risk">At Risk</option>
+                                        <option value="New Customer">New Customer</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="dateRangeOption" class="form-label">Date Range Option:</label>
+                                    <select id="dateRangeOption" class="form-select form-select-sm">
+                                        <option value="last_1_year">Last 1 Year</option>
+                                        <option value="all">All Data</option>
+                                        <option value="custom">Custom Range</option>
+                                    </select>
+                                </div>
+                                <div id="customDateRange" class="d-flex mb-2" style="display: none;">
+                                    <div class="me-2">
+                                        <label for="startDate" class="form-label">Start Date:</label>
+                                        <input type="date" id="startDate" class="form-control form-control-sm">
+                                    </div>
+                                    <div>
+                                        <label for="endDate" class="form-label">End Date:</label>
+                                        <input type="date" id="endDate" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+                                <button id="applyFilters" class="btn btn-primary btn-sm w-100">Apply Filters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="error" class="alert alert-danger" style="display: none;"></div>
+
+                <p id="dateRangeNote" class="text-muted mb-4">
+                    Showing data for the last 1 year (2024-05-26 to 2025-05-26).
+                </p>
+
+                <h3>RFM & Churn Visualizations</h3>
+
+                <div class="row">
+                    <!-- RFM Segment Distribution -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header">
+                                <h4 class="my-0 font-weight-normal">RFM Segment Distribution</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="canvas-container">
+                                    <canvas id="rfmSegmentChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Customers and Order Activity Over Time -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header">
+                                <h4 class="my-0 font-weight-normal">Active Customers and Order Activity Over Time</h4>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text text-muted">
+                                    This chart shows the number of active customers (black area) and total orders (gray line) each month. Active customers are those who have ordered within the last 180 days as of May 26, 2025.
+                                </p>
+                                <div class="canvas-container">
+                                    <canvas id="activeCustomersChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Average Order Value Over Time -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header">
+                                <h4 class="my-0 font-weight-normal">Average Order Value Over Time</h4>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text text-muted">
+                                    This chart shows the average order value (AOV) per month, helping you understand trends in customer spending.
+                                </p>
+                                <div class="canvas-container">
+                                    <canvas id="aovChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Recommendations by Segment -->
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header">
+                                <h4 class="my-0 font-weight-normal">Customer Recommendations by Segment</h4>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text text-muted">
+                                    Below are actionable recommendations for each RFM segment, along with a list of customers in each segment.
+                                </p>
+                                <div id="recommendations-section"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'js/rfm_churn_visualizations.js' %}"></script>
+</body>
+</html>
