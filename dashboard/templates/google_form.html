@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Ad Strategy Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .form-group label span {
+            color: #888;
+            font-size: 0.9em;
+            font-weight: normal;
+        }
+
+        .form-group select,
+        .form-group input[type="number"],
+        .form-group input[type="text"],
+        .form-group input[type="file"],
+        .form-group input[type="url"],
+        .form-group input[type="tel"],
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-group .age-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group .age-group input {
+            flex: 1;
+        }
+
+        .form-group input[type="file"] {
+            padding: 3px;
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .form-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .form-buttons button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .form-buttons button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .form-buttons button[type="reset"] {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .form-buttons button[type="reset"]:hover {
+            background-color: #b02a37;
+        }
+
+        .search-ad-fields,
+        .app-ad-fields,
+        .call-ad-fields {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center; margin-bottom: 30px;">Google Ad Strategy Form</h2>
+
+    <div style="display: flex;gap: 40px;align-items: flex-start;justify-content: center;flex-wrap: wrap;padding: 20px;max-width: 1200px;margin: 0 auto;">
+        <!-- Strategy Box -->
+        {% if strategy %}
+        <div style="flex: 0 0 300px;background: #fff;padding: 20px;border-radius: 8px;box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size: 14px;line-height: 1.5;">
+            <h3 style="margin-bottom: 15px; color: #007bff;">Selected Strategy</h3>
+            {% for item in strategy.content %}
+                {% if item.key %}
+                    <p><strong>{{ item.key }}:</strong> {{ item.value }}</p>
+                {% else %}
+                    <p>{{ item.value }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Form -->
+        <form method="POST" action="{% url 'submit_google_form' %}" enctype="multipart/form-data" style="flex: 1 1 500px;background-color: #fff;padding: 25px;border-radius: 8px;box-shadow: 0 2px 10px rgba(0,0,0,0.06);max-width: 650px;">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="goal">Goal <span>Select the primary objective of your ad campaign (e.g., Leads, Traffic).</span></label>
+                <select name="goal" id="goal" required>
+                    <option value="">Select Goal</option>
+                    <option value="Leads">Leads</option>
+                    <option value="Traffic">Traffic</option>
+                    <option value="Brand Awareness">Brand Awareness</option>
+                    <option value="Conversions">Conversions</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="budget">Budget $ <span>Enter your total ad budget in the detected currency.</span></label>
+                <input type="number" name="budget" id="budget" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Duration (days) <span>Enter the campaign duration in days.</span></label>
+                <input type="number" name="duration" id="duration" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="audience_gender">Gender of Targeted Audience <span>Select the gender of your target audience.</span></label>
+                <select name="audience_gender" id="audience_gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="Women">Women</option>
+                    <option value="Men">Men</option>
+                    <option value="All">All</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="audience_start">Age Group of Audience <span>Enter the age range of your target audience.</span></label>
+                <div class="age-group" style="display:flex; gap:10px;">
+                    <input type="number" name="audience_start" id="audience_start" min="13" max="100" placeholder="Start Age" required>
+                    <span>to</span>
+                    <input type="number" name="audience_end" id="audience_end" min="13" max="100" placeholder="End Age" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="audience_interest">Audience's Interests <span>Enter interests relevant to your business (e.g., Organic Skincare, Tech Gadgets).</span></label>
+                <input type="text" name="audience_interest" id="audience_interest" required>
+            </div>
+
+            <div class="form-group">
+                <label for="target_location">Target Location <span>Enter the country for your campaign (e.g., United States, India).</span></label>
+                <input type="text" name="target_location" id="target_location" required placeholder="Enter country name">
+            </div>
+
+            <div class="form-group">
+                <label for="ad_type">Select Ad Type <span>Choose the type of ad format for your campaign.</span></label>
+                <select name="ad_type" id="ad_type" required>
+                    <option value="">Select Ad Type</option>
+                    <option value="Responsive Search Ads">Responsive Search Ads</option>
+                    <option value="Search Ads">Search Ads</option>
+                    <option value="Responsive Display Ads">Responsive Display Ads</option>
+                    <option value="Display Ads">Display Ads</option>
+                    <option value="Performance Max Campaigns">Performance Max Campaigns</option>
+                    <option value="Shopping Ads">Shopping Ads</option>
+                    <option value="YouTube Video Ads">YouTube Video Ads</option>
+                    <option value="Discovery Ads">Discovery Ads</option>
+                    <option value="App Promotion Ads">App Promotion Ads</option>
+                    <option value="Call-Only Ads">Call-Only Ads</option>
+                </select>
+            </div>
+
+            <!-- Search Ad Fields -->
+            <div class="search-ad-fields">
+                <div class="form-group">
+                    <label for="keywords">Keywords <span>Enter comma-separated keywords (e.g., skin care, beauty products).</span></label>
+                    <input type="text" name="keywords" id="keywords">
+                </div>
+                <div class="form-group">
+                    <label for="headline1">Headline 1 <span>Enter first headline (max 30 characters).</span></label>
+                    <input type="text" name="headline1" id="headline1" maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label for="headline2">Headline 2 <span>Enter second headline (max 30 characters).</span></label>
+                    <input type="text" name="headline2" id="headline2" maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label for="description1">Description 1 <span>Enter first description (max 90 characters).</span></label>
+                    <input type="text" name="description1" id="description1" maxlength="90">
+                </div>
+                <div class="form-group">
+                    <label for="description2">Description 2 <span>Enter second description (max 90 characters).</span></label>
+                    <input type="text" name="description2" id="description2" maxlength="90">
+                </div>
+                <div class="form-group">
+                    <label for="final_url">Final URL <span>Enter the landing page URL (e.g., https://yourwebsite.com/offer).</span></label>
+                    <input type="url" name="final_url" id="final_url">
+                </div>
+            </div>
+
+            <!-- App Promotion Ad Fields -->
+            <div class="app-ad-fields">
+                <div class="form-group">
+                    <label for="app_id">App ID <span>Enter your app's package name (e.g., com.example.app).</span></label>
+                    <input type="text" name="app_id" id="app_id">
+                </div>
+                <div class="form-group">
+                    <label for="app_store_url">App Store URL <span>Enter the Google Play or App Store URL (e.g., https://play.google.com/store/apps/details?id=com.example).</span></label>
+                    <input type="url" name="app_store_url" id="app_store_url">
+                </div>
+            </div>
+
+            <!-- Call-Only Ad Fields -->
+            <div class="call-ad-fields">
+                <div class="form-group">
+                    <label for="phone_number">Phone Number <span>Enter the phone number for calls (e.g., +12025550123).</span></label>
+                    <input type="tel" name="phone_number" id="phone_number" pattern="\+[1-9][0-9]{1,14}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cta">CTA (Call to Action) <span>Select the action you want users to take.</span></label>
+                <select name="cta" id="cta" required>
+                    <option value="">Select CTA</option>
+                    <option value="Learn More">Learn More</option>
+                    <option value="Shop Now">Shop Now</option>
+                    <option value="Sign Up">Sign Up</option>
+                    <option value="Download">Download</option>
+                    <option value="Get Offer">Get Offer</option>
+                    <option value="Book Now">Book Now</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="media">Upload Media <span>Upload video or image files for your ad.</span></label>
+                <input type="file" name="video" id="video" accept="video/*">
+                <input type="file" name="image" id="image" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label for="create_ad">Create Ad Immediately <span>Check to create the ad now, or leave unchecked to save the campaign setup only.</span></label>
+                <input type="checkbox" name="create_ad" id="create_ad">
+            </div>
+
+            <div class="form-buttons" style="margin-top: 20px; display: flex; justify-content: space-between;">
+                <button type="submit">Submit</button>
+                <button type="reset">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('ad_type').addEventListener('change', function() {
+            const searchFields = document.querySelector('.search-ad-fields');
+            const appFields = document.querySelector('.app-ad-fields');
+            const callFields = document.querySelector('.call-ad-fields');
+            const adType = this.value;
+
+            // Hide all conditional fields
+            searchFields.style.display = 'none';
+            appFields.style.display = 'none';
+            callFields.style.display = 'none';
+
+            // Show relevant fields
+            if (adType === 'Search Ads' || adType === 'Responsive Search Ads') {
+                searchFields.style.display = 'block';
+            } else if (adType === 'App Promotion Ads') {
+                appFields.style.display = 'block';
+            } else if (adType === 'Call-Only Ads') {
+                callFields.style.display = 'block';
+            }
+        });
+
+        document.getElementById('audience_start').addEventListener('input', function() {
+            const endAge = document.getElementById('audience_end');
+            if (this.value && parseInt(this.value) > parseInt(endAge.value)) {
+                endAge.value = this.value;
+            }
+        });
+
+        document.getElementById('audience_end').addEventListener('input', function() {
+            const startAge = document.getElementById('audience_start');
+            if (this.value && parseInt(this.value) < parseInt(startAge.value)) {
+                startAge.value = this.value;
+            }
+        });
+    </script>
+</body>
+</html>

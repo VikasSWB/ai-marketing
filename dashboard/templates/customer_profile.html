@@ -1,0 +1,150 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/customer_profile.css' %}"> <!-- Updated to use customer_profile.css -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/customer_profile.js' %}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/customer_profile.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+        <div class="sidebar">
+            <h2>Logo</h2>
+            <ul>
+                <li><a href="{% url 'dashboard' %}" class="sidebar-link">Home</a></li>
+
+                <li>
+                    <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#customerMenu" role="button" aria-expanded="false" aria-controls="customerMenu">
+                        Customers <i class="bi bi-chevron-down arrow"></i>
+                    </a>
+                    <div class="collapse" id="customerMenu" data-bs-parent=".sidebar">
+                        <a href="{% url 'customer_insights' %}" class="sidebar-sub-link">Customer Insights</a>
+                        <a href="{% url 'rfm_analysis' %}" class="sidebar-sub-link">RFM Analysis</a>
+                        <a href="{% url 'rfm_churn_visualizations' %}" class="sidebar-sub-link">RFM & Churn Trends</a>
+                        <a href="{% url 'customer_profile' %}" class="sidebar-sub-link active">Customer Profiles</a>
+                    </div>
+                </li>
+
+                <li>
+                    <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#trendsMenu" role="button" aria-expanded="false" aria-controls="trendsMenu">
+                        Trends <i class="bi bi-chevron-down arrow"></i>
+                    </a>
+                    <div class="collapse" id="trendsMenu" data-bs-parent=".sidebar">
+                        <a href="{% url 'eda_charts' %}" class="sidebar-sub-link">Data Exploration</a>
+                        <a href="{% url 'cohort_analysis' %}" class="sidebar-sub-link">Cohort Analysis</a>
+                    </div>
+                </li>
+
+                <li>
+                    <a class="sidebar-link collapsible" data-bs-toggle="collapse" href="#marketingMenu" role="button" aria-expanded="false" aria-controls="marketingMenu">
+                        Marketing <i class="bi bi-chevron-down arrow"></i>
+                    </a>
+                    <div class="collapse" id="marketingMenu" data-bs-parent=".sidebar">
+                        <a href="{% url 'strategies' %}" class="sidebar-sub-link">Ad Strategies</a>
+                    </div>
+                </li>
+
+                <li><a href="{% url 'financial_insights' %}" class="sidebar-link">Finance</a></li>
+                <li><a href="{% url 'product_insights' %}" class="sidebar-link">Products</a></li>
+                <li><a href="{% url 'signout' %}" class="sidebar-link">Sign Out</a></li>
+            </ul>
+        </div>
+    <!-- <div class="container"> -->
+        <div class="main-content">
+            <div class="navbar">
+                <h1>Customer Profile</h1>
+                <div class="user-info">
+                    {% if user.is_authenticated %}
+                        <p>Hello, {{ user.username }}!</p>
+                    {% else %}
+                        <a href="{% url 'signin' %}">Sign In</a>
+                        <a href="{% url 'signup' %}">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div id="error" style="display: none; color: red;"></div>
+
+            <section class="filters">
+                <div class="filter-group">
+                    <label for="customerSelect">Select Customer:</label>
+                    <select id="customerSelect">
+                        <option value="">-- Select a Customer --</option>
+                    </select>
+                </div>
+            </section>
+
+            <section id="customerProfile" style="display: none;">
+                <div class="profile-section">
+                    <div class="customer-info">
+                        <h2><i class="bi bi-person-fill"></i> <span id="customerName"></span></h2>
+                        <p><i class="bi bi-envelope-fill"></i> <span id="customerEmail"></span></p>
+                        <p><i class="bi bi-gem"></i> RFM Segment: <strong id="rfmStatus"></strong> <span class="badge" id="rfmBadge" style="display: none;">♥</span></p>
+                        <p><i class="bi bi-hourglass-split"></i> Lifespan: <span id="firstOrderDate"></span> – <span id="lastOrderDate"></span></p>
+                    </div>
+            
+                    <div class="summary-metrics">
+                        <div class="metric-box">
+                            <i class="bi bi-currency-dollar"></i>
+                            <div>
+                                <span class="badge" id="ltvBadge" style="display: none;">Top 10%</span>
+                                <p class="metric-label">LTV</p>
+                                <p id="ltv"></p>
+                            </div>
+                        </div>
+                        <div class="metric-box">
+                            <i class="bi bi-clock-fill"></i>
+                            <div>
+                                <span class="badge" id="lifetimeBadge" style="display: none;">Top 10%</span>
+                                <p class="metric-label">Lifetime</p>
+                                <p id="lifetime"></p>
+                            </div>
+                        </div>
+                        <div class="metric-box">
+                            <i class="bi bi-calendar-range-fill"></i>
+                            <div>
+                                <p class="metric-label">Avg Days Between Orders</p>
+                                <p id="avgDaysBetweenOrders"></p>
+                            </div>
+                        </div>
+                        <div class="metric-box">
+                            <i class="bi bi-calendar-event-fill"></i>
+                            <div>
+                                <span class="badge overdue" id="overdueBadge" style="display: none;">Overdue</span>
+                                <p class="metric-label">Next Order</p>
+                                <p id="estNextOrderDate"></p>
+                            </div>
+                        </div>
+                        <div class="metric-box">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <div>
+                                <p class="metric-label">Churn Risk</p>
+                                <p id="churnRate"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="chart-section">
+                    <h3><i class="bi bi-graph-up"></i> LTV Over Time</h3>
+                    <div class="canvas-wrapper">
+                        <canvas id="ltvGraph"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+    </div>
+</body>
+</html>
